@@ -9,13 +9,14 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+    /*animation: App-logo-spin infinite 20s linear;*/
   }
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #000;
   min-height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -23,9 +24,196 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
+.App-toast-container{
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  height: 99%;
+  overflow-x: hidden;
+
+}
+
+.App-toast{
+  display: flex;
+  flex-direction: row;
+  max-width: 320px;
+  min-width: 200px;
+  background-color: #282c34;
+  padding: 10px 8px;
+  margin: 8px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 20px;
+  -webkit-box-shadow: 12px 11px 27px -6px rgba(26,28,33,1);
+  -moz-box-shadow: 12px 11px 27px -6px rgba(26,28,33,1);
+  box-shadow: 12px 11px 27px -6px rgba(26,28,33,1);
+}
+
+.Toast-input{
+  position: absolute;
+  z-index: -1;
+}
+
+.toast-body{
+  width: 91%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.toast-action{
+  width: 9%;
+  align-self: center;
+  display: flex;
+}
+
+.deleteIcon{
+  height: 15px;
+}
 
 .App-link {
   color: #61dafb;
+}
+
+.user-container{
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  z-index: 3;
+}
+
+.login-modal{
+  height: 200px;
+  width: 60%;
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /*justify-content: space-evenly;*/
+  max-width: 400px;
+  background-color: #282c34;
+  padding: 10px 8px;
+  margin: 8px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 20px;
+  -webkit-box-shadow: 12px 11px 27px -6px rgba(26,28,33,1);
+  -moz-box-shadow: 12px 11px 27px -6px rgba(26,28,33,1);
+  box-shadow: 12px 11px 27px -6px rgba(26,28,33,1);
+}
+
+.login-input{
+  /*position: absolute;
+  z-index*/: -1;
+  margin-top: 10px;
+}
+
+.input{
+  border: 2px solid gray;
+  padding: 5px;
+  border-radius: 9px;
+  background: black;
+  color: white;
+  width: 77%;
+  padding: 4px;
+  font-size: 15px;
+  text-align: center;
+  margin: 10px;
+}
+
+.btn{
+  width: 60%;
+  height: 15%;
+  background: gray;
+  border: 2px solid white;
+  border-radius: 9px;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.errorText{
+  color: red;
+}
+
+.user-toads-body{
+  width: 90%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.User-toast{
+  display: flex;
+  flex-direction: row;
+  min-width: 200px;
+  background-color: #282c34;
+  padding: 10px 8px;
+  margin: 8px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 20px;
+  -webkit-box-shadow: 12px 11px 27px -6px rgba(26,28,33,1);
+  -moz-box-shadow: 12px 11px 27px -6px rgba(26,28,33,1);
+  box-shadow: 12px 11px 27px -6px rgba(26,28,33,1);
+}
+
+.logout-action{
+  width: 10%;
+  align-self: center;
+  display: flex;
+}
+
+.addbtn{
+  width: 100px;
+  height: 30%;
+  background: gray;
+  border: 2px solid white;
+  border-radius: 9px;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.textin-modal{
+  height: 140px;
+  width: 60%;
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /*justify-content: space-evenly;*/
+  max-width: 400px;
+  background-color: #282c34;
+  padding: 5px 8px;
+  /*margin: 8px;*/
+  border-radius: 8px;
+  font-size: 14px;
+  /*line-height: 20px;*/
+  -webkit-box-shadow: 12px 11px 27px -6px rgba(26,28,33,1);
+  -moz-box-shadow: 12px 11px 27px -6px rgba(26,28,33,1);
+  box-shadow: 12px 11px 27px -6px rgba(26,28,33,1);
+}
+
+.addTextToast{
+  visibility: hidden;
+}
+
+@media screen and (max-width: 600px) {
+  .User-toast {
+    max-width: 15px;
+    min-width: 0px;
+  }
+  .user-toads-body{
+    width: 0%;
+  }
+  .logout-action{
+    width: 100%;
+    align-self: center;
+    display: flex;
+  }
+
+  .addTextToast{
+    visibility: visible;
+  }
 }
 
 @keyframes App-logo-spin {
