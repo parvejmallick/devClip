@@ -19,7 +19,6 @@ class App extends React.Component{
     firebase.auth().onAuthStateChanged((user) => {
       this.setState({loading : false});
       var user = firebase.auth().currentUser;
-      console.log('user',user);
       if (user) {
         this.setState({user:user, loading : true});
         var commentsRef = firebase.database().ref('users/' + user.uid);
@@ -30,7 +29,6 @@ class App extends React.Component{
             body : data.val().body,
             key : data.key
           }
-          console.log(val);
           this.dataAddListner(val);
         });
 
@@ -41,7 +39,6 @@ class App extends React.Component{
             body : data.val().body,
             key : data.key
           }
-          console.log(val);
           this.dataRemoveListner(val);
         });
       }else{
@@ -152,7 +149,6 @@ class App extends React.Component{
   dataRemoveListner = (val) => {
     let prevLoop = this.state.loop;
     var i = prevLoop.findIndex(res=> res.key === val.key);
-    console.log(i);
     (prevLoop).splice(i, 1);
     this.setState({ loop: prevLoop });
   };
@@ -163,32 +159,26 @@ class App extends React.Component{
     e.preventDefault();
     clipboardData = e.clipboardData || window.clipboardData;
     pastedData = clipboardData.getData('Text');
-    console.log(pastedData);
     //this.dbWrite({title: "title", body: pastedData, type: 'type'});
     firebase.database().ref('users/' + this.state.user.uid).push({title: "title", body: pastedData, type: 'type'});
   };
 
   handleClick = (event) => {
-    console.log(event.target.id);
     var copyText = document.getElementById(`toast${event.target.id}`);
-    console.log(copyText);
     copyText.select();
     copyText.setSelectionRange(0, 99999);
     document.execCommand("copy");
   };
 
   delete = (i) => {
-    console.log(i);
     var survey=firebase.database().ref('users/' + this.state.user.uid);    //Eg path is company/employee                
     survey.child(i).remove();
   };
 
   submit = () =>{
-    console.log(this.state);
     Firebase.signIn(this.state).then((res) => {
-      console.log('index', res);
+      // console.log('index', res);
     },(e) => {
-      console.log('index', e);
       this.setState({ errorText : e });
     });
   };
