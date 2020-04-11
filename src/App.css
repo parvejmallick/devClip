@@ -38,6 +38,7 @@
   flex-direction: row;
   max-width: 320px;
   min-width: 200px;
+  min-height: 50px;
   background-color: #282c34;
   padding: 10px 8px;
   margin: 8px;
@@ -58,17 +59,34 @@
   width: 91%;
   text-overflow: ellipsis;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toast-action-container{
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
 }
 
 .toast-action{
-  width: 9%;
+  /*width: 9%;*/
   align-self: center;
   display: flex;
 }
 
-.deleteIcon{
-  height: 15px;
+.toast-download{
+  position: absolute;
+  left: 8%;
+  margin-top: 7px;
 }
+
+.codeIcon{ height: 18px; }
+.mailIcon{ height: 20px; }
+.wwwIcon{ height: 18px; }
+.downloadIcon{ height: 35px; }
+.deleteIcon{ height: 15px;}
 
 .App-link {
   color: #61dafb;

@@ -3,19 +3,76 @@ import logo from './logo2.png';
 import deleteIcon from './stop.png';
 import off from './off.png';
 import add from './add.png';
+import code from './coding.png';
+import mail from './mail.png';
+import www from './www.png';
+import note from './note.png';
+import download from './download.png';
+import up from './up.png';
+import folder from './folder.png';
+
 import './App.css';
 import Firebase from './firebase';
+import Helper from './helper';
 import * as firebase from 'firebase';
+var storageRef = firebase.storage().ref();
+
 var db_ref = firebase.database().ref('/');
 
 class App extends React.Component{
 
   constructor(props) {
     super(props);
-    this.state = { email: '', password: '', errorText: '', user: '', loading: true, newTextModal: false, loop : [] };
+    this.state = { email: '', password: '', errorText: '', user: '', loading: true, newTextModal: false, loop : [], uploadProgree: '' };
+  }
+
+  dropRef = React.createRef()
+  handleDrag = (e) => { e.preventDefault(); e.stopPropagation(); }
+  handleDragIn = (e) => { e.preventDefault(); e.stopPropagation(); }
+  handleDragOut = (e) => { e.preventDefault(); e.stopPropagation(); }
+
+  handleDrop = (e) => {  
+    e.preventDefault();
+    e.stopPropagation();
+    for(let i=0; i < e.dataTransfer.files.length; i++){
+      this.handleUpload(e.dataTransfer.files[i]);
+    }
+  }
+
+  onChangeFile(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    this.handleUpload(e.target.files[0]);
+  }
+
+  handleUpload = (rawfile) => {  
+    var metadata = { contentType: rawfile.type};
+    var originalFilename = rawfile.name;
+
+    var file = rawfile;
+    var fileType = rawfile.type.split("/")
+    var uploadedFileref = 'userfile/devClipfile'+Math.floor(Math.random() * 1000000000)+'.'+fileType[1];
+    var uploadTask = firebase.storage().ref(uploadedFileref).put(file, metadata);
+
+    uploadTask.on('state_changed',(snapshot)=>{
+      var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      this.setState({ uploadProgree: progress.toFixed(0) });
+    },(error) => {
+      // Handle unsuccessful uploads
+    },() => {
+      uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+        firebase.database().ref('users/' + this.state.user.uid).push({title: "title", body: originalFilename, type: 'file', link:downloadURL, path: uploadedFileref});
+      });
+    });
   }
 
   componentDidMount(){
+    let div = this.dropRef.current
+    div.addEventListener('dragenter', this.handleDragIn)
+    div.addEventListener('dragleave', this.handleDragOut)
+    div.addEventListener('dragover', this.handleDrag)
+    div.addEventListener('drop', this.handleDrop)
+
     firebase.auth().onAuthStateChanged((user) => {
       this.setState({loading : false});
       var user = firebase.auth().currentUser;
@@ -27,6 +84,8 @@ class App extends React.Component{
             type : data.val().type,
             title : data.val().title,
             body : data.val().body,
+            link : data.val().link,
+            path: data.val().path,
             key : data.key
           }
           this.dataAddListner(val);
@@ -37,6 +96,8 @@ class App extends React.Component{
             type : data.val().type,
             title : data.val().title,
             body : data.val().body,
+            link : data.val().link,
+            path: data.val().path,
             key : data.key
           }
           this.dataRemoveListner(val);
@@ -51,14 +112,19 @@ class App extends React.Component{
   
 
   render() {
-    const { loop, email, password, errorText, user, loading, newTextModal } = this.state;
+    const { loop, email, password, errorText, user, loading, newTextModal, uploadProgree } = this.state;
     return (
-      <div className="App" id="App">
+      <div className="App" id="App" ref={this.dropRef}>
       <meta name="viewport" content="width=device-width, user-scalable=no" />
         <header className="App-header">
 
           {user && (
-            <img src={logo} className="App-logo" alt="logo" />
+            <div>
+              <img src={logo} className="App-logo" alt="logo" />
+              {uploadProgree != '' && uploadProgree < 100 && (
+                <div>Uploading... ({uploadProgree}%)</div>
+              )}
+            </div>
           )}
           
           {/*<p> Edit <code>src/App.js</code> and save to reload. </p>
@@ -94,10 +160,9 @@ class App extends React.Component{
           ):(
             <div>
               <div class="user-container">
-                <div class="User-toast">
+                <div class="User-toast" onClick={() => Firebase.logout()}>
                   <div class="user-toads-body"> {user.email} </div>
-                  
-                  <div class="logout-action" onClick={() => Firebase.logout()}>
+                  <div class="logout-action">
                     <img src={off} className="deleteIcon" alt="logo" />
                   </div>
                 </div>
@@ -109,21 +174,78 @@ class App extends React.Component{
                   </div>
                 </div>
 
+                <div class="User-toast addTextToast" onClick={() => this.refs.fileUploader.click()}>
+                  <div class="user-toads-body"> Upload </div>
+                  <div class="logout-action">
+                    <img src={up} className="deleteIcon" alt="logo" />
+                    <input type="file" id="file" ref="fileUploader" onChange={this.onChangeFile.bind(this)} style={{display: "none"}}/>
+                  </div>
+                </div>
+
               </div>
 
               <div class="App-toast-container">
                 {loop.map((res,key) =>(
                   <div class="App-toast" id={key} key={key}>
+                    
+                      {res.type == 'file' && (
+                        <a href={res.link} download={res.body}>
+                          <div class="toast-action toast-download">
+                            <img src={download} className="downloadIcon" alt="logo" />
+                          </div>
+                        </a>
+                      )}
+
                     <div class="toast-body" id={key} onClick={this.handleClick}>
                       <div class="Toast-input">
                         <textarea type="text" id={`toast${key}`} value={res.body} readonly/>
-                      </div>              
+                      </div>
                       {res.body}
+                      
+                    </div>
+
+                    <div class="toast-action-container">
+                      {res.type == 'file' ? (
+                            <div class="toast-action" onClick={() => this.action(res.body, 'file')}>
+                              <img src={folder} className="wwwIcon" alt="logo" />
+                            </div>
+                        ):(
+                          
+                            <div style={{display: 'contents'}}>
+                              {Helper.getType(res.body) == 'http' && (
+                                <div class="toast-action" onClick={() => this.action(res.body, 'www')}>
+                                  <img src={www} className="wwwIcon" alt="logo" />
+                                </div>
+                              )}
+                              
+                              {Helper.getType(res.body) == 'code' && (
+                                <div class="toast-action" onClick={() => this.action(res.body, 'code')}>
+                                  <img src={code} className="codeIcon" alt="logo" />
+                                </div>
+                              )}
+
+                              {Helper.getType(res.body) == 'mail' && (
+                                <div class="toast-action">
+                                  <a href="mailto:someone@example.com?Subject=Hello%20again">
+                                    <img src={mail} className="mailIcon" alt="logo" />
+                                  </a>
+                                </div>
+                              )}
+
+                              {Helper.getType(res.body) == 'note' && (
+                                <div class="toast-action" onClick={() => this.action(res.body, 'note')}>
+                                  <img src={note} className="mailIcon" alt="logo" />
+                                </div>
+                              )}
+                          </div>
+                        )
+                      }
+                      
+                      <div class="toast-action" onClick={() => this.delete(res)}>
+                        <img src={deleteIcon} className="deleteIcon" alt="logo" />
+                      </div>
                     </div>
                     
-                    <div class="toast-action" onClick={() => this.delete(res.key)}>
-                      <img src={deleteIcon} className="deleteIcon" alt="logo" />
-                    </div>
                   </div>
                 ))}
               </div>
@@ -136,6 +258,12 @@ class App extends React.Component{
         </body>
       </div>
     );
+  }
+
+  action = (text, type) => {
+    if(type == 'www'){
+      window.open(text, "_blank");
+    }
   }
 
   handleChange = (e, name) => { this.setState({ [e.target.name]: e.target.value }); };
@@ -171,8 +299,18 @@ class App extends React.Component{
   };
 
   delete = (i) => {
-    var survey=firebase.database().ref('users/' + this.state.user.uid);    //Eg path is company/employee                
-    survey.child(i).remove();
+    if(i.type == 'file'){
+      storageRef.child(i.path).delete().then((res) => {
+        var survey=firebase.database().ref('users/' + this.state.user.uid);    //Eg path is company/employee                
+        survey.child(i.key).remove();
+      }).catch((error) => {
+        // console.log(error);
+      });
+    }else{
+      var survey=firebase.database().ref('users/' + this.state.user.uid);    //Eg path is company/employee                
+      survey.child(i.key).remove();
+    }
+    
   };
 
   submit = () =>{
