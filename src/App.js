@@ -1,15 +1,15 @@
 import React from 'react';
-import logo from './logo2.png';
-import deleteIcon from './stop.png';
-import off from './off.png';
-import add from './add.png';
-import code from './coding.png';
-import mail from './mail.png';
-import www from './www.png';
-import note from './note.png';
-import download from './download.png';
-import up from './up.png';
-import folder from './folder.png';
+import logo from './images/logo2.png';
+import deleteIcon from './images/stop.png';
+import off from './images/off.png';
+import add from './images/add.png';
+import code from './images/coding.png';
+import mail from './images/mail.png';
+import www from './images/www.png';
+import note from './images/note.png';
+import download from './images/download.png';
+import up from './images/up.png';
+import folder from './images/folder.png';
 
 import './App.css';
 import Firebase from './firebase';
@@ -42,7 +42,11 @@ class App extends React.Component{
   onChangeFile(e) {
     e.stopPropagation();
     e.preventDefault();
-    this.handleUpload(e.target.files[0]);
+    console.log(e.target.files.length);
+    //this.handleUpload(e.target.files[0]);
+    for(let i=0; i < e.target.files.length; i++){
+      this.handleUpload(e.target.files[i]);
+    }
   }
 
   handleUpload = (rawfile) => {  
@@ -178,7 +182,7 @@ class App extends React.Component{
                   <div class="user-toads-body"> Upload </div>
                   <div class="logout-action">
                     <img src={up} className="deleteIcon" alt="logo" />
-                    <input type="file" id="file" ref="fileUploader" onChange={this.onChangeFile.bind(this)} style={{display: "none"}}/>
+                    <input type="file" id="file" ref="fileUploader" multiple="multiple" onChange={this.onChangeFile.bind(this)} style={{display: "none"}}/>
                   </div>
                 </div>
 

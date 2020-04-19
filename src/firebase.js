@@ -1,11 +1,11 @@
 import * as firebase from 'firebase';
 
 const firebaseConfig = {
-  YOUR_FIREBASE_CONFIG
+  
 };
 
-var app = firebase.initializeApp(firebaseConfig);
-
+// var app = firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig);
 export default class Firebase {
 
   static signIn = async ({email, password}) => {
